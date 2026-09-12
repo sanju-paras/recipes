@@ -1,3 +1,6 @@
+---
+layout: null
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -381,33 +384,31 @@
     Notice
   </div>
 
-  <script>
-    /* ================= JEKYLL AUTO-DISCOVERY BRIDGE =================
-     * When GitHub Pages runs Jekyll, it loops through the _recipes/ folder
-     * and generates this JSON array automatically.
-     * When running locally without Jekyll, fallback data is provided.
-     */
-    let AUTO_DISCOVERED_RECIPES = [
-      {% for item in site.recipes %}
-      {
-        id: {{ item.slug | jsonify }},
-        name: {{ item.title | jsonify }},
-        cuisine: {{ item.cuisine | default: "General" | jsonify }},
-        category: {{ item.category | default: "Main" | jsonify }},
-        servings: {{ item.servings | default: 4 }},
-        prepTime: {{ item.prep_time_mins | default: 15 }},
-        cookTime: {{ item.cook_time_mins | default: 20 }},
-        totalTime: {{ item.total_time_mins | default: 35 }},
-        rating: {{ item.rating | default: 5.0 }},
-        difficulty: {{ item.difficulty | default: "Easy" | jsonify }},
-        favorite: {{ item.favorite | default: false }},
-        dietaryTag: {{ item.dietary | default: "Vegetarian" | jsonify }},
-        sourceUrl: {{ item.source_url | default: "" | jsonify }},
-        rawContent: {{ item.content | jsonify }}
-      },
-      {% endfor %}
-    ];
+  <!-- Safe Jekyll Liquid Data Island (Won't crash JS if Jekyll is bypassed) -->
+  <script id="jekyllDataIsland" type="application/json">
+  [
+    {% for item in site.recipes %}
+    {
+      "id": {{ item.slug | jsonify }},
+      "name": {{ item.title | jsonify }},
+      "cuisine": {{ item.cuisine | default: "General" | jsonify }},
+      "category": {{ item.category | default: "Main" | jsonify }},
+      "servings": {{ item.servings | default: 4 }},
+      "prepTime": {{ item.prep_time_mins | default: 15 }},
+      "cookTime": {{ item.cook_time_mins | default: 20 }},
+      "totalTime": {{ item.total_time_mins | default: 35 }},
+      "rating": {{ item.rating | default: 5.0 }},
+      "difficulty": {{ item.difficulty | default: "Easy" | jsonify }},
+      "favorite": {{ item.favorite | default: false }},
+      "dietaryTag": {{ item.dietary | default: "Vegetarian" | jsonify }},
+      "sourceUrl": {{ item.source_url | default: "" | jsonify }},
+      "rawContent": {{ item.content | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ]
+  </script>
 
+  <script>
     // Fallback seed data if running purely offline/locally without Jekyll server
     const FALLBACK_RECIPES = [
       {
@@ -662,11 +663,29 @@
     let isTimerRunning = false;
 
     function initRecipes() {
-      // If Jekyll discovered recipes from _recipes/, parse them:
-      if (Array.isArray(AUTO_DISCOVERED_RECIPES) && AUTO_DISCOVERED_RECIPES.length > 0) {
-        recipes = AUTO_DISCOVERED_RECIPES.map(parseJekyllContent);
-      } else {
-        // Fallback when viewing index.html directly via browser filesystem:
+      let loadedFromJekyll = false;
+
+      // 1. Attempt to read from the Jekyll JSON script tag:
+      try {
+        const dataIsland = document.getElementById('jekyllDataIsland');
+        if (dataIsland) {
+          const raw = dataIsland.textContent.trim();
+          // If Liquid tags were evaluated by Jekyll, it will start with '[' and NOT '{%'
+          if (!raw.startsWith('{%') && raw.startsWith('[')) {
+            const jekyllParsed = JSON.parse(raw);
+            if (Array.isArray(jekyllParsed) && jekyllParsed.length > 0) {
+              recipes = jekyllParsed.map(parseJekyllContent);
+              loadedFromJekyll = true;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Could not parse Jekyll collection output:', err);
+      }
+
+      // 2. If Jekyll did not discover recipes (e.g. folder named recipes instead of _recipes,
+      //    or running locally without Jekyll), fall back gracefully:
+      if (!loadedFromJekyll || recipes.length === 0) {
         try {
           const stored = localStorage.getItem('recipes_collection_v4');
           recipes = stored ? JSON.parse(stored) : [...FALLBACK_RECIPES];
@@ -674,6 +693,7 @@
           recipes = [...FALLBACK_RECIPES];
         }
       }
+
       activeRecipeId = recipes[0]?.id || '';
       document.getElementById('recipeCountBadge').textContent = `${recipes.length} recipes in archive`;
     }
