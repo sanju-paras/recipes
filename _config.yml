@@ -1,0 +1,16 @@
+title: "Kitchen Recipe Box"
+description: "Personal recipe archive and kitchen cooking hub"
+
+# Enable collections for auto-discovery of recipe markdown files
+
+collections:
+  recipes:
+    output: true
+    permalink: /recipes/:slug/
+
+# Exclude unnecessary files from the build
+
+exclude:
+- README.md
+- DEPLOYMENT.md
+- LICENSE
