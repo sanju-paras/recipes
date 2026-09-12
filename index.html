@@ -85,6 +85,11 @@ layout: null
             class="px-3 py-1.5 rounded-md text-xs font-medium transition bg-white text-ink-900 shadow-sm">
             Recipe Index
           </button>
+          <button id="navWantToTryBtn" onclick="switchView('want_to_try')" 
+            class="px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900 flex items-center gap-1.5">
+            <span>Want to Try</span>
+            <span id="navWantToTryBadge" class="px-1.5 py-0.2 text-[10px] font-mono bg-clay-700/10 text-clay-700 rounded-full font-bold">0</span>
+          </button>
           <button id="navKitchenBtn" onclick="switchView('kitchen')" 
             class="px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900">
             Cook Mode
@@ -122,6 +127,15 @@ layout: null
           </div>
 
           <div class="flex items-center gap-2 flex-wrap">
+            <div class="inline-flex rounded-lg border border-ink-200 p-0.5 bg-parchment-100 text-xs font-mono">
+              <button id="tabAllBtn" onclick="setCatalogTab('all')" class="px-2.5 py-1 rounded-md bg-white text-ink-900 font-semibold shadow-xs">All</button>
+              <button id="tabTestedBtn" onclick="setCatalogTab('tested')" class="px-2.5 py-1 rounded-md text-ink-600 hover:text-ink-900">Tested</button>
+              <button id="tabWantToTryBtn" onclick="setCatalogTab('want_to_try')" class="px-2.5 py-1 rounded-md text-ink-600 hover:text-ink-900 flex items-center gap-1">
+                <span>Want to Try</span>
+                <span id="tabWantToTryCount" class="text-[10px] font-bold text-clay-700"></span>
+              </button>
+            </div>
+
             <button id="quickFavBtn" onclick="toggleFilter('favorite')" 
               class="px-3 py-1.5 rounded-full border border-ink-200 bg-white text-ink-600 text-xs hover:border-ink-400 transition">
               ★ Favorites
@@ -154,6 +168,7 @@ layout: null
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-ink-100 pb-6">
           <div class="space-y-1">
             <div class="flex items-center gap-2">
+              <span id="kitchenStatusBadge" class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-clay-700/10 text-clay-700 font-bold"></span>
               <span id="kitchenCuisineTag" class="text-xs font-mono uppercase tracking-widest text-clay-700 font-medium"></span>
               <span class="text-ink-300">&bull;</span>
               <span id="kitchenCategoryTag" class="text-xs font-mono uppercase tracking-widest text-ink-500"></span>
@@ -162,6 +177,9 @@ layout: null
           </div>
 
           <div class="flex items-center gap-3 flex-wrap">
+            <button id="kitchenStatusToggleBtn" onclick="toggleActiveRecipeStatus()" 
+              class="border border-ink-300 text-ink-800 hover:bg-parchment-100 px-3 py-2 rounded-lg text-xs font-mono transition flex items-center gap-1.5">
+            </button>
             <select id="kitchenRecipeSelect" onchange="selectActiveRecipe(this.value)" 
               class="bg-parchment-100 border border-ink-200 text-ink-800 text-xs font-medium rounded-lg px-3 py-2 focus:outline-none focus:border-ink-500">
             </select>
@@ -183,7 +201,7 @@ layout: null
             <span id="kitchenPrepTime" class="font-medium text-ink-900 text-sm"></span>
           </div>
           <div class="border-l-2 border-ink-200 pl-3">
-            <span class="block font-mono text-[11px] uppercase tracking-wider text-ink-400">Cook Time</span>
+            <span class="block font-mono text-[11px] uppercase tracking-wider text-ink-400">Cook / Chill</span>
             <span id="kitchenCookTime" class="font-medium text-ink-900 text-sm"></span>
           </div>
           <div class="border-l-2 border-ink-200 pl-3">
@@ -335,14 +353,18 @@ layout: null
           <input type="url" id="addSourceUrl" placeholder="https://..." class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600">
         </div>
 
-        <div class="pt-2 border-t border-ink-100 flex items-center justify-between">
+        <div class="pt-2 border-t border-ink-100 flex items-center justify-between flex-wrap gap-2">
           <label class="inline-flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" id="addDownloadMd" checked class="rounded border-ink-300 text-clay-700">
-            <span class="text-ink-700 font-mono text-[11px]">Download <code class="text-ink-900 font-bold">.md</code> to drop into <code class="text-ink-900 font-bold">_recipes/</code></span>
+            <input type="checkbox" id="addWantToTry" class="rounded border-ink-300 text-clay-700">
+            <span class="text-ink-700 font-mono text-[11px]">Add to <strong>"Want to Try"</strong> wishlist</span>
           </label>
           <label class="inline-flex items-center gap-2 cursor-pointer">
             <input type="checkbox" id="addFavorite" class="rounded border-ink-300 text-clay-700">
             <span class="text-ink-700 font-mono text-[11px]">Mark Favorite ★</span>
+          </label>
+          <label class="inline-flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="addDownloadMd" checked class="rounded border-ink-300 text-clay-700">
+            <span class="text-ink-700 font-mono text-[11px]">Download <code class="text-ink-900 font-bold">.md</code></span>
           </label>
         </div>
 
@@ -400,6 +422,8 @@ layout: null
       "rating": {{ item.rating | default: 5.0 }},
       "difficulty": {{ item.difficulty | default: "Easy" | jsonify }},
       "favorite": {{ item.favorite | default: false }},
+      "wantToTry": {{ item.want_to_try | default: false }},
+      "status": {{ item.status | default: "tested" | jsonify }},
       "dietaryTag": {{ item.dietary | default: "Vegetarian" | jsonify }},
       "sourceUrl": {{ item.source_url | default: "" | jsonify }},
       "rawContent": {{ item.content | jsonify }}
@@ -412,6 +436,39 @@ layout: null
     // Fallback seed data if running purely offline/locally without Jekyll server
     const FALLBACK_RECIPES = [
       {
+        id: 'dark-chocolate-mousse-cake',
+        name: 'Dark Chocolate Mousse Cake',
+        cuisine: 'Dessert',
+        category: 'Dessert',
+        servings: 10,
+        prepTime: 20,
+        cookTime: 180,
+        totalTime: 200,
+        rating: 5.0,
+        difficulty: 'Easy',
+        favorite: false,
+        wantToTry: true,
+        dietaryTag: 'Vegetarian',
+        ingredients: [
+          '180g packet chocolate wheat biscuits',
+          '75g butter, melted',
+          '1/4 cup strong espresso coffee',
+          '2 x 250g Whittaker\'s 50% Dark Chocolate (chopped)',
+          '600ml cream',
+          'Cocoa powder for dusting'
+        ],
+        instructions: [
+          'Grease and line a 20cm springform cake tin.',
+          'Place biscuits in a food processor and blitz until fine breadcrumbs. Add melted butter and blitz again until combined. Press mixture firmly into base of cake tin and refrigerate.',
+          'Place chocolate in a heatproof bowl over a saucepan of simmering water. Heat until melted, stirring often. Stir in espresso coffee, remove from heat, and set aside to cool slightly.',
+          'Beat cream until soft peaks form. Gently fold cream into cooled chocolate so as not to lose airiness. Pour mixture over biscuit base and smooth top with a spatula.',
+          'Return to fridge for approx 3 hours until set firm.',
+          'Dust generously with cocoa powder and serve.'
+        ],
+        notes: 'Rich no-bake Whittaker\'s chocolate mousse cake with espresso. Ensure chocolate has cooled slightly before folding in whipped cream so it doesn\'t seize.',
+        sourceUrl: ''
+      },
+      {
         id: 'ammachis-keerai-masiyal',
         name: "Ammachi's Keerai Masiyal",
         cuisine: 'South Indian',
@@ -423,6 +480,7 @@ layout: null
         rating: 5.0,
         difficulty: 'Easy',
         favorite: true,
+        wantToTry: false,
         dietaryTag: 'Vegetarian',
         ingredients: [
           '1 packet spinach',
@@ -457,6 +515,7 @@ layout: null
         rating: 5.0,
         difficulty: 'Easy',
         favorite: true,
+        wantToTry: false,
         dietaryTag: 'Vegan',
         ingredients: [
           '1 cup toor dal (soaked overnight)',
@@ -493,6 +552,7 @@ layout: null
         rating: 4.9,
         difficulty: 'Medium',
         favorite: true,
+        wantToTry: false,
         dietaryTag: 'Vegetarian',
         ingredients: ['Raw rice', 'Urad dal', 'Chana dal', 'Fenugreek seeds (methi)', 'Salt', 'Water', 'Ghee or sesame oil'],
         instructions: [
@@ -516,6 +576,7 @@ layout: null
         rating: 4.9,
         difficulty: 'Medium',
         favorite: true,
+        wantToTry: true,
         dietaryTag: 'Dairy-Free',
         ingredients: ['Lamb shanks', 'Massaman curry paste', 'Coconut milk', 'Potatoes', 'Onion', 'Fish sauce', 'Peanuts'],
         instructions: [
@@ -539,6 +600,7 @@ layout: null
         rating: 4.8,
         difficulty: 'Easy',
         favorite: true,
+        wantToTry: false,
         dietaryTag: 'Vegetarian',
         ingredients: ['Raw rice', 'Moong dal', 'Ghee', 'Cumin seeds', 'Black peppercorns', 'Cashews', 'Ginger', 'Curry leaves', 'Hing'],
         instructions: [
@@ -562,6 +624,7 @@ layout: null
         rating: 4.7,
         difficulty: 'Easy',
         favorite: true,
+        wantToTry: false,
         dietaryTag: 'Vegan',
         ingredients: ['Brinjal', 'Ripe tomatoes', 'Shallots', 'Green chillies', 'Byadgi chillies', 'Tamarind', 'Sesame oil', 'Mustard seeds', 'Curry leaves'],
         instructions: [
@@ -584,6 +647,7 @@ layout: null
         rating: 4.8,
         difficulty: 'Medium',
         favorite: true,
+        wantToTry: false,
         dietaryTag: 'Dairy-Free',
         ingredients: ['Minced meat', 'Onions', 'Garlic', 'Ginger', 'Garam masala', 'Turmeric', 'Tomatoes', 'Coriander', 'Coconut milk'],
         instructions: [
@@ -607,6 +671,7 @@ layout: null
         rating: 4.6,
         difficulty: 'Easy',
         favorite: false,
+        wantToTry: true,
         dietaryTag: 'Vegetarian',
         ingredients: ['Risoni pasta', 'Canned 4-bean mix', 'Zucchini', 'Cherry tomatoes', 'Olive oil', 'Garlic', 'Lemon juice', 'Fresh herbs'],
         instructions: [
@@ -622,7 +687,10 @@ layout: null
 
     /* Helper: Parse markdown content generated by Jekyll if necessary */
     function parseJekyllContent(recipe) {
-      if (recipe.ingredients && recipe.instructions) return recipe;
+      const wantToTry = recipe.wantToTry === true || recipe.status === 'want_to_try';
+      if (recipe.ingredients && recipe.instructions) {
+        return { ...recipe, wantToTry };
+      }
       const html = recipe.rawContent || '';
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
@@ -645,6 +713,7 @@ layout: null
 
       return {
         ...recipe,
+        wantToTry,
         ingredients,
         instructions,
         notes
@@ -652,6 +721,7 @@ layout: null
     }
 
     let recipes = [];
+    let currentCatalogTab = 'all'; // 'all' | 'tested' | 'want_to_try'
     let currentFilterCuisine = 'All';
     let currentFilterFavorite = false;
     let currentFilterQuick = false;
@@ -662,6 +732,16 @@ layout: null
     let timerRemainingSeconds = 0;
     let isTimerRunning = false;
 
+    function updateCounters() {
+      const wantToTryCount = recipes.filter(r => r.wantToTry).length;
+      const navBadge = document.getElementById('navWantToTryBadge');
+      const tabBadge = document.getElementById('tabWantToTryCount');
+      if (navBadge) navBadge.textContent = wantToTryCount;
+      if (tabBadge) tabBadge.textContent = wantToTryCount ? `(${wantToTryCount})` : '';
+      const recipeBadge = document.getElementById('recipeCountBadge');
+      if (recipeBadge) recipeBadge.textContent = `${recipes.length} recipes in archive`;
+    }
+
     function initRecipes() {
       let loadedFromJekyll = false;
 
@@ -670,7 +750,6 @@ layout: null
         const dataIsland = document.getElementById('jekyllDataIsland');
         if (dataIsland) {
           const raw = dataIsland.textContent.trim();
-          // Separate '{' and '%' to prevent Jekyll's Liquid parser from mistaking this JS string for a Liquid tag
           const liquidToken = '{' + '%';
           if (!raw.includes(liquidToken) && raw.startsWith('[')) {
             const jekyllParsed = JSON.parse(raw);
@@ -684,11 +763,10 @@ layout: null
         console.warn('Could not parse Jekyll collection output:', err);
       }
 
-      // 2. If Jekyll did not discover recipes (e.g. folder named recipes instead of _recipes,
-      //    or running locally without Jekyll), fall back gracefully:
+      // 2. Fall back gracefully to local storage or defaults:
       if (!loadedFromJekyll || recipes.length === 0) {
         try {
-          const stored = localStorage.getItem('recipes_collection_v4');
+          const stored = localStorage.getItem('recipes_collection_v6');
           recipes = stored ? JSON.parse(stored) : [...FALLBACK_RECIPES];
         } catch(e) {
           recipes = [...FALLBACK_RECIPES];
@@ -696,36 +774,63 @@ layout: null
       }
 
       activeRecipeId = recipes[0]?.id || '';
-      document.getElementById('recipeCountBadge').textContent = `${recipes.length} recipes in archive`;
+      updateCounters();
     }
 
     function persistRecipes() {
       try {
-        localStorage.setItem('recipes_collection_v4', JSON.stringify(recipes));
+        localStorage.setItem('recipes_collection_v6', JSON.stringify(recipes));
       } catch(e) {}
+      updateCounters();
     }
 
     window.switchView = function(viewName) {
       const catalogView = document.getElementById('catalogView');
       const kitchenView = document.getElementById('kitchenView');
       const navCatalogBtn = document.getElementById('navCatalogBtn');
+      const navWantToTryBtn = document.getElementById('navWantToTryBtn');
       const navKitchenBtn = document.getElementById('navKitchenBtn');
 
       if (viewName === 'kitchen') {
         catalogView.classList.add('hidden');
         kitchenView.classList.remove('hidden');
         navCatalogBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900';
+        navWantToTryBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900 flex items-center gap-1.5';
         navKitchenBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition bg-white text-ink-900 shadow-sm';
         renderKitchenView();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (viewName === 'want_to_try') {
+        kitchenView.classList.add('hidden');
+        catalogView.classList.remove('hidden');
+        navKitchenBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900';
+        navCatalogBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900';
+        navWantToTryBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition bg-white text-ink-900 shadow-sm flex items-center gap-1.5';
+        setCatalogTab('want_to_try');
       } else {
         kitchenView.classList.add('hidden');
         catalogView.classList.remove('hidden');
         navKitchenBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900';
+        navWantToTryBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900 flex items-center gap-1.5';
         navCatalogBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition bg-white text-ink-900 shadow-sm';
-        renderCuisineFilters();
-        renderRecipeCards();
+        setCatalogTab('all');
       }
+    };
+
+    window.setCatalogTab = function(tab) {
+      currentCatalogTab = tab;
+      const tabAllBtn = document.getElementById('tabAllBtn');
+      const tabTestedBtn = document.getElementById('tabTestedBtn');
+      const tabWantToTryBtn = document.getElementById('tabWantToTryBtn');
+
+      const activeClasses = 'px-2.5 py-1 rounded-md bg-white text-ink-900 font-semibold shadow-xs';
+      const inactiveClasses = 'px-2.5 py-1 rounded-md text-ink-600 hover:text-ink-900';
+
+      tabAllBtn.className = tab === 'all' ? activeClasses : inactiveClasses;
+      tabTestedBtn.className = tab === 'tested' ? activeClasses : inactiveClasses;
+      tabWantToTryBtn.className = tab === 'want_to_try' ? (activeClasses + ' flex items-center gap-1') : (inactiveClasses + ' flex items-center gap-1');
+
+      renderCuisineFilters();
+      renderRecipeCards();
     };
 
     window.openCookMode = function(recipeId) {
@@ -735,7 +840,12 @@ layout: null
 
     function renderCuisineFilters() {
       const container = document.getElementById('cuisineFilterContainer');
-      const cuisines = ['All', ...new Set(recipes.map(r => r.cuisine).filter(Boolean))];
+      const availableRecipes = recipes.filter(r => {
+        if (currentCatalogTab === 'tested') return !r.wantToTry;
+        if (currentCatalogTab === 'want_to_try') return !!r.wantToTry;
+        return true;
+      });
+      const cuisines = ['All', ...new Set(availableRecipes.map(r => r.cuisine).filter(Boolean))];
       
       container.innerHTML = cuisines.map(cuisine => {
         const isActive = currentFilterCuisine === cuisine;
@@ -785,8 +895,7 @@ layout: null
       document.getElementById('searchInput').value = '';
       document.getElementById('quickFavBtn').className = 'px-3 py-1.5 rounded-full border border-ink-200 bg-white text-ink-600 text-xs hover:border-ink-400 transition';
       document.getElementById('quickQuickBtn').className = 'px-3 py-1.5 rounded-full border border-ink-200 bg-white text-ink-600 text-xs hover:border-ink-400 transition';
-      renderCuisineFilters();
-      renderRecipeCards();
+      setCatalogTab('all');
     };
 
     function renderRecipeCards() {
@@ -794,6 +903,10 @@ layout: null
       const emptyState = document.getElementById('noResultsNotice');
 
       const filtered = recipes.filter(r => {
+        // Tab filter (All / Tested / Want to Try)
+        if (currentCatalogTab === 'tested' && r.wantToTry) return false;
+        if (currentCatalogTab === 'want_to_try' && !r.wantToTry) return false;
+
         const matchesSearch = !currentSearchTerm || 
           r.name.toLowerCase().includes(currentSearchTerm) ||
           r.cuisine.toLowerCase().includes(currentSearchTerm) ||
@@ -818,10 +931,22 @@ layout: null
         <article class="bg-white border border-ink-200 rounded-xl p-5 shadow-xs flex flex-col justify-between hover:border-ink-400 transition duration-150 group">
           <div class="space-y-3">
             <div class="flex items-center justify-between text-[11px] font-mono">
-              <span class="text-clay-700 tracking-wider uppercase font-medium">${r.cuisine} &bull; ${r.category}</span>
-              <button onclick="toggleCardFavorite('${r.id}', event)" class="text-ink-400 hover:text-clay-700 text-base leading-none" title="Toggle Favorite">
-                ${r.favorite ? '★' : '☆'}
-              </button>
+              <div class="flex items-center gap-1.5">
+                <span class="text-clay-700 tracking-wider uppercase font-medium">${r.cuisine} &bull; ${r.category}</span>
+                ${r.wantToTry 
+                  ? `<span class="bg-clay-700/10 text-clay-700 font-semibold px-2 py-0.5 rounded-full text-[10px]">Want to Try</span>` 
+                  : `<span class="bg-emerald-600/10 text-emerald-800 font-semibold px-2 py-0.5 rounded-full text-[10px]">Tested</span>`}
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="toggleCardWantToTry('${r.id}', event)" 
+                  class="text-[11px] font-mono hover:text-clay-700 text-ink-400" 
+                  title="${r.wantToTry ? 'Move to Tested' : 'Add to Want to Try'}">
+                  ${r.wantToTry ? '✓ Cooked' : '+ Want to try'}
+                </button>
+                <button onclick="toggleCardFavorite('${r.id}', event)" class="text-ink-400 hover:text-clay-700 text-base leading-none" title="Toggle Favorite">
+                  ${r.favorite ? '★' : '☆'}
+                </button>
+              </div>
             </div>
 
             <div>
@@ -857,6 +982,17 @@ layout: null
       `).join('');
     }
 
+    window.toggleCardWantToTry = function(recipeId, event) {
+      if (event) event.stopPropagation();
+      const rec = recipes.find(r => r.id === recipeId);
+      if (rec) {
+        rec.wantToTry = !rec.wantToTry;
+        persistRecipes();
+        renderRecipeCards();
+        notify(rec.wantToTry ? `Added "${rec.name}" to Want to Try` : `Marked "${rec.name}" as Tested!`);
+      }
+    };
+
     window.toggleCardFavorite = function(recipeId, event) {
       if (event) event.stopPropagation();
       const rec = recipes.find(r => r.id === recipeId);
@@ -875,8 +1011,24 @@ layout: null
 
       const select = document.getElementById('kitchenRecipeSelect');
       select.innerHTML = recipes.map(r => `
-        <option value="${r.id}" ${r.id === activeRecipeId ? 'selected' : ''}>${r.name}</option>
+        <option value="${r.id}" ${r.id === activeRecipeId ? 'selected' : ''}>${r.name} ${r.wantToTry ? '(Want to try)' : ''}</option>
       `).join('');
+
+      const statusBadge = document.getElementById('kitchenStatusBadge');
+      if (recipe.wantToTry) {
+        statusBadge.textContent = 'Want to Try';
+        statusBadge.className = 'text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-clay-700/10 text-clay-700 font-bold';
+      } else {
+        statusBadge.textContent = 'Kitchen Tested';
+        statusBadge.className = 'text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-emerald-600/10 text-emerald-800 font-bold';
+      }
+
+      const statusToggleBtn = document.getElementById('kitchenStatusToggleBtn');
+      if (recipe.wantToTry) {
+        statusToggleBtn.innerHTML = `<span>✓</span><span>I cooked this! (Mark Tested)</span>`;
+      } else {
+        statusToggleBtn.innerHTML = `<span>+</span><span>Move to Want to Try</span>`;
+      }
 
       document.getElementById('kitchenCuisineTag').textContent = recipe.cuisine;
       document.getElementById('kitchenCategoryTag').textContent = recipe.category;
@@ -917,6 +1069,16 @@ layout: null
         sourceContainer.classList.add('hidden');
       }
     }
+
+    window.toggleActiveRecipeStatus = function() {
+      const recipe = recipes.find(r => r.id === activeRecipeId);
+      if (recipe) {
+        recipe.wantToTry = !recipe.wantToTry;
+        persistRecipes();
+        renderKitchenView();
+        notify(recipe.wantToTry ? `Moved to "Want to Try"` : `Marked "${recipe.name}" as Cooked & Tested!`);
+      }
+    };
 
     window.selectActiveRecipe = function(id) {
       activeRecipeId = id;
@@ -1009,6 +1171,8 @@ cook_time_mins: ${recipe.cookTime}
 total_time_mins: ${recipe.totalTime}
 difficulty: "${recipe.difficulty}"
 favorite: ${recipe.favorite}
+want_to_try: ${recipe.wantToTry || false}
+status: "${recipe.wantToTry ? 'want_to_try' : 'tested'}"
 dietary: "${recipe.dietaryTag}"
 rating: ${recipe.rating}
 source_url: "${recipe.sourceUrl || ''}"
@@ -1094,6 +1258,7 @@ ${instructionsMd}
       const stepsRaw = document.getElementById('addSteps').value;
       const notes = document.getElementById('addNotes').value.trim();
       const sourceUrl = document.getElementById('addSourceUrl').value.trim();
+      const wantToTry = document.getElementById('addWantToTry').checked;
       const favorite = document.getElementById('addFavorite').checked;
       const autoDownload = document.getElementById('addDownloadMd').checked;
 
@@ -1113,6 +1278,7 @@ ${instructionsMd}
         rating: 5.0,
         difficulty: (prep + cook > 45) ? 'Medium' : 'Easy',
         favorite,
+        wantToTry,
         dietaryTag: diet,
         ingredients,
         instructions,
@@ -1132,7 +1298,7 @@ ${instructionsMd}
       if (autoDownload) {
         downloadRecipeAsMarkdown(newRecipe);
       }
-      notify(`Saved "${name}". Drop into _recipes/ on GitHub!`);
+      notify(wantToTry ? `Saved to "Want to Try": "${name}"` : `Saved recipe "${name}"`);
     };
 
     function notify(text) {
