@@ -6,7 +6,7 @@
   <title>Kitchen Recipe Box</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Fraunces (Editorial Serif) & Plus Jakarta Sans & JetBrains Mono -->
+  <!-- Google Fonts: Fraunces & Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -57,29 +57,10 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-font-smoothing: antialiased;
     }
-    ::selection {
-      background-color: #EBE3D7;
-      color: #1C1917;
-    }
-    /* Custom clean scrollbars */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #DDD2C1;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #C2B19A;
-    }
-    .check-strikethrough:checked + span {
-      text-decoration: line-through;
-      color: #A8A29E;
-    }
+    ::selection { background-color: #EBE3D7; color: #1C1917; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #DDD2C1; border-radius: 9999px; }
+    .check-strikethrough:checked + span { text-decoration: line-through; color: #A8A29E; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -88,17 +69,14 @@
   <header class="border-b border-ink-200/80 bg-parchment-50/90 backdrop-blur sticky top-0 z-30">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       
-      <!-- Brand / Home link -->
       <div class="flex items-center gap-3">
         <a href="javascript:void(0)" onclick="switchView('catalog')" class="flex items-baseline gap-2 group">
           <span class="font-serif text-2xl font-bold tracking-tight text-ink-900 group-hover:text-clay-700 transition">Recipes</span>
-          <span class="text-[11px] font-mono tracking-widest text-ink-400 uppercase hidden sm:inline">Personal Kitchen Hub</span>
+          <span id="recipeCountBadge" class="text-[11px] font-mono tracking-widest text-ink-400 uppercase hidden sm:inline"></span>
         </a>
       </div>
 
-      <!-- Actions & Views Navigation -->
       <nav class="flex items-center gap-2 sm:gap-3">
-        <!-- Dual View Tabs -->
         <div class="bg-parchment-200/60 p-1 rounded-lg flex items-center gap-1 border border-ink-200">
           <button id="navCatalogBtn" onclick="switchView('catalog')" 
             class="px-3 py-1.5 rounded-md text-xs font-medium transition bg-white text-ink-900 shadow-sm">
@@ -112,12 +90,10 @@
 
         <div class="h-4 w-px bg-ink-200 hidden sm:block"></div>
 
-        <!-- View Markdown button -->
-        <button onclick="openMarkdownModal()" class="text-xs font-mono tracking-wide text-ink-700 hover:text-clay-700 px-2.5 py-1.5 rounded-md hover:bg-parchment-100 transition hidden sm:inline-flex items-center gap-1.5" title="View formatted Markdown for active recipe">
+        <button onclick="openMarkdownModal()" class="text-xs font-mono tracking-wide text-ink-700 hover:text-clay-700 px-2.5 py-1.5 rounded-md hover:bg-parchment-100 transition hidden sm:inline-flex items-center gap-1.5" title="View Markdown">
           <span>view .md</span>
         </button>
 
-        <!-- Record Recipe button -->
         <button onclick="openNewRecipeModal()" 
           class="text-xs font-medium bg-ink-900 text-parchment-50 hover:bg-clay-700 px-3.5 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -129,23 +105,19 @@
 
   <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
 
-    <!-- ================= VIEW 1: RECIPE INDEX (CATALOG) ================= -->
+    <!-- CATALOG VIEW -->
     <section id="catalogView" class="space-y-8">
-      
-      <!-- Filter and Search Toolbar -->
       <div class="space-y-4 pb-4 border-b border-ink-200">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <!-- Live Search Input -->
           <div class="relative flex-grow max-w-md">
             <input type="text" id="searchInput" oninput="handleSearch(this.value)" 
-              placeholder="Search recipes, ingredients, or cuisine..." 
+              placeholder="Search recipes, ingredients, or notes..." 
               class="w-full bg-white border border-ink-200 rounded-lg pl-9 pr-4 py-2 text-sm text-ink-900 placeholder-ink-400 focus:outline-none focus:border-ink-600 transition shadow-sm">
             <svg class="w-4 h-4 text-ink-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </div>
 
-          <!-- Quick Toggle Buttons -->
           <div class="flex items-center gap-2 flex-wrap">
             <button id="quickFavBtn" onclick="toggleFilter('favorite')" 
               class="px-3 py-1.5 rounded-full border border-ink-200 bg-white text-ink-600 text-xs hover:border-ink-400 transition">
@@ -158,48 +130,37 @@
           </div>
         </div>
 
-        <!-- Category & Cuisine Chips -->
         <div class="flex items-center gap-2 flex-wrap text-xs text-ink-600">
           <span class="font-mono text-[11px] uppercase tracking-wider text-ink-400 mr-1">Cuisine:</span>
-          <div id="cuisineFilterContainer" class="flex items-center gap-1.5 flex-wrap">
-            <!-- Dynamically populated chips -->
-          </div>
+          <div id="cuisineFilterContainer" class="flex items-center gap-1.5 flex-wrap"></div>
         </div>
       </div>
 
-      <!-- Recipes Grid -->
-      <div id="recipesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- Rendered by JavaScript -->
-      </div>
+      <div id="recipesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-      <!-- Empty State Indicator -->
       <div id="noResultsNotice" class="hidden py-16 text-center space-y-2">
         <p class="font-serif text-lg text-ink-700">No matching recipes found</p>
-        <p class="text-xs text-ink-400 font-mono">Try adjusting your search terms or clearing the selected filters.</p>
+        <p class="text-xs text-ink-400 font-mono">Try adjusting your search terms or clearing selected filters.</p>
         <button onclick="clearAllFilters()" class="mt-3 text-xs font-medium text-clay-700 hover:underline">Reset all filters</button>
       </div>
     </section>
 
-    <!-- ================= VIEW 2: KITCHEN DISPLAY MODE ================= -->
+    <!-- KITCHEN COOK VIEW -->
     <section id="kitchenView" class="hidden space-y-8">
-      
-      <!-- Recipe Header & Selector -->
       <div class="bg-white border border-ink-200 rounded-xl p-6 sm:p-8 shadow-sm space-y-6">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-ink-100 pb-6">
           <div class="space-y-1">
             <div class="flex items-center gap-2">
-              <span id="kitchenCuisineTag" class="text-xs font-mono uppercase tracking-widest text-clay-700 font-medium">Thai</span>
+              <span id="kitchenCuisineTag" class="text-xs font-mono uppercase tracking-widest text-clay-700 font-medium"></span>
               <span class="text-ink-300">&bull;</span>
-              <span id="kitchenCategoryTag" class="text-xs font-mono uppercase tracking-widest text-ink-500">Dinner</span>
+              <span id="kitchenCategoryTag" class="text-xs font-mono uppercase tracking-widest text-ink-500"></span>
             </div>
-            <h1 id="kitchenTitle" class="font-serif text-2xl sm:text-3xl font-bold text-ink-900">Lamb Shanks in Massaman Curry</h1>
+            <h1 id="kitchenTitle" class="font-serif text-2xl sm:text-3xl font-bold text-ink-900"></h1>
           </div>
 
-          <!-- Recipe Switcher Dropdown & Actions -->
           <div class="flex items-center gap-3 flex-wrap">
             <select id="kitchenRecipeSelect" onchange="selectActiveRecipe(this.value)" 
               class="bg-parchment-100 border border-ink-200 text-ink-800 text-xs font-medium rounded-lg px-3 py-2 focus:outline-none focus:border-ink-500">
-              <!-- Dynamically populated options -->
             </select>
             
             <button onclick="openMarkdownModal(activeRecipeId)" 
@@ -207,43 +168,38 @@
               view .md
             </button>
             <button onclick="downloadActiveRecipeMd()" 
-              class="border border-ink-200 text-ink-700 hover:bg-parchment-100 px-3 py-2 rounded-lg text-xs font-mono transition" title="Download .md file for your repository">
+              class="border border-ink-200 text-ink-700 hover:bg-parchment-100 px-3 py-2 rounded-lg text-xs font-mono transition" title="Download .md file">
               download .md
             </button>
           </div>
         </div>
 
-        <!-- Recipe Metadata Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div class="border-l-2 border-ink-200 pl-3">
             <span class="block font-mono text-[11px] uppercase tracking-wider text-ink-400">Prep Time</span>
-            <span id="kitchenPrepTime" class="font-medium text-ink-900 text-sm">20 min</span>
+            <span id="kitchenPrepTime" class="font-medium text-ink-900 text-sm"></span>
           </div>
           <div class="border-l-2 border-ink-200 pl-3">
             <span class="block font-mono text-[11px] uppercase tracking-wider text-ink-400">Cook Time</span>
-            <span id="kitchenCookTime" class="font-medium text-ink-900 text-sm">120 min</span>
+            <span id="kitchenCookTime" class="font-medium text-ink-900 text-sm"></span>
           </div>
           <div class="border-l-2 border-ink-200 pl-3">
             <span class="block font-mono text-[11px] uppercase tracking-wider text-ink-400">Total Time</span>
-            <span id="kitchenTotalTime" class="font-medium text-ink-900 text-sm">140 min</span>
+            <span id="kitchenTotalTime" class="font-medium text-ink-900 text-sm"></span>
           </div>
           <div class="border-l-2 border-ink-200 pl-3">
             <span class="block font-mono text-[11px] uppercase tracking-wider text-ink-400">Rating & Diet</span>
-            <span id="kitchenRatingDiet" class="font-medium text-ink-900 text-sm">4.9 ★ &bull; Dairy-Free</span>
+            <span id="kitchenRatingDiet" class="font-medium text-ink-900 text-sm"></span>
           </div>
         </div>
       </div>
 
-      <!-- Main Cooking Layout: 2 Columns (Mise en Place & Method) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Left Column: Mise en place (Checklist & Scaler) -->
+        <!-- Mise en place -->
         <div class="lg:col-span-5 space-y-6">
           <div class="bg-white border border-ink-200 rounded-xl p-6 shadow-sm space-y-4">
             <div class="flex items-center justify-between border-b border-ink-100 pb-3">
               <h2 class="font-serif text-lg font-bold text-ink-900">Mise en place</h2>
-              
-              <!-- Servings Scaler -->
               <div class="flex items-center gap-1 bg-parchment-100 p-1 rounded-md border border-ink-200 text-xs font-mono">
                 <span class="text-ink-500 px-1">Yield:</span>
                 <button onclick="setServingMultiplier(0.5)" id="scaleBtnHalf" class="px-1.5 py-0.5 rounded text-ink-600 hover:bg-white transition">0.5x</button>
@@ -253,24 +209,20 @@
               </div>
             </div>
 
-            <p class="text-xs text-ink-400 font-mono">Check off ingredients as you prep your station:</p>
-
-            <!-- Ingredients Checklist -->
-            <ul id="kitchenIngredientsList" class="space-y-2.5 text-sm">
-              <!-- Dynamically populated -->
-            </ul>
+            <p class="text-xs text-ink-400 font-mono">Check off ingredients as you prep:</p>
+            <ul id="kitchenIngredientsList" class="space-y-2.5 text-sm"></ul>
           </div>
 
-          <!-- Kitchen Timer Widget -->
+          <!-- Timer -->
           <div class="bg-parchment-100 border border-ink-200 rounded-xl p-5 shadow-sm space-y-3">
             <div class="flex items-center justify-between">
               <h3 class="font-serif text-sm font-semibold text-ink-800">Kitchen Timer</h3>
               <span id="timerDisplay" class="font-mono text-xl font-bold text-ink-900">00:00</span>
             </div>
             <div class="grid grid-cols-3 gap-2 text-xs font-mono">
+              <button onclick="setTimerMinutes(1)" class="p-1.5 bg-white border border-ink-200 rounded hover:border-ink-400 transition text-ink-700">+1 min</button>
               <button onclick="setTimerMinutes(5)" class="p-1.5 bg-white border border-ink-200 rounded hover:border-ink-400 transition text-ink-700">+5 min</button>
-              <button onclick="setTimerMinutes(15)" class="p-1.5 bg-white border border-ink-200 rounded hover:border-ink-400 transition text-ink-700">+15 min</button>
-              <button onclick="setTimerMinutes(30)" class="p-1.5 bg-white border border-ink-200 rounded hover:border-ink-400 transition text-ink-700">+30 min</button>
+              <button onclick="setTimerMinutes(20)" class="p-1.5 bg-white border border-ink-200 rounded hover:border-ink-400 transition text-ink-700">+20 min</button>
             </div>
             <div class="flex items-center gap-2 pt-1">
               <button id="timerToggleBtn" onclick="toggleTimer()" class="flex-1 py-1.5 bg-ink-900 text-parchment-50 rounded text-xs font-medium hover:bg-clay-700 transition">Start</button>
@@ -279,28 +231,21 @@
           </div>
         </div>
 
-        <!-- Right Column: Cooking Instructions & Notes -->
+        <!-- Method & Notes -->
         <div class="lg:col-span-7 space-y-6">
           <div class="bg-white border border-ink-200 rounded-xl p-6 sm:p-8 shadow-sm space-y-6">
             <div class="flex items-center justify-between border-b border-ink-100 pb-3">
               <h2 class="font-serif text-lg font-bold text-ink-900">Method</h2>
-              <span id="kitchenStepCounter" class="text-xs font-mono text-ink-400">4 Steps</span>
+              <span id="kitchenStepCounter" class="text-xs font-mono text-ink-400"></span>
             </div>
 
-            <!-- Step by Step List -->
-            <div id="kitchenStepsList" class="space-y-6">
-              <!-- Dynamically populated -->
-            </div>
+            <div id="kitchenStepsList" class="space-y-6"></div>
 
-            <!-- Chef's Notes & Observations -->
             <div class="mt-8 pt-6 border-t border-ink-200 space-y-2">
-              <h3 class="font-mono text-xs uppercase tracking-wider text-ink-400">Cook's Marginalia & Pairing Notes</h3>
-              <div id="kitchenNotes" class="bg-parchment-50 border-l-2 border-clay-700 p-4 rounded-r-lg text-sm text-ink-800 italic leading-relaxed">
-                <!-- Populated by JS -->
-              </div>
+              <h3 class="font-mono text-xs uppercase tracking-wider text-ink-400">Cook's Marginalia & Notes</h3>
+              <div id="kitchenNotes" class="bg-parchment-50 border-l-2 border-clay-700 p-4 rounded-r-lg text-sm text-ink-800 italic leading-relaxed"></div>
             </div>
 
-            <!-- Source Link (if present) -->
             <div id="kitchenSourceContainer" class="pt-2 text-xs font-mono">
               <a id="kitchenSourceLink" href="#" target="_blank" rel="noopener noreferrer" 
                 class="inline-flex items-center gap-1.5 text-clay-700 hover:underline">
@@ -314,13 +259,13 @@
     </section>
   </main>
 
-  <!-- ================= ADD RECIPE MODAL ================= -->
+  <!-- ADD RECIPE MODAL -->
   <div id="newRecipeModal" class="hidden fixed inset-0 z-50 bg-ink-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white border border-ink-200 max-w-xl w-full rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-baseline justify-between border-b border-ink-100 pb-3">
         <div>
           <h3 class="font-serif text-xl font-bold text-ink-900">Record a New Recipe</h3>
-          <p class="text-[11px] font-mono text-ink-400 mt-0.5">Saves to local storage and prepares a Markdown file for your repo</p>
+          <p class="text-[11px] font-mono text-ink-400 mt-0.5">Saves directly and downloads a .md file for your _recipes/ folder</p>
         </div>
         <button onclick="closeNewRecipeModal()" class="text-ink-400 hover:text-ink-700 text-lg">&times;</button>
       </div>
@@ -334,7 +279,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div>
             <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Cuisine</label>
-            <input type="text" id="addCuisine" required placeholder="e.g. Italian" class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600">
+            <input type="text" id="addCuisine" required placeholder="e.g. South Indian" class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600">
           </div>
           <div>
             <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Category</label>
@@ -368,18 +313,18 @@
         </div>
 
         <div>
-          <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Ingredients (comma separated)</label>
-          <textarea id="addIngredients" rows="2" required placeholder="Arborio rice, vegetable broth, saffron threads, butter, shallot, parmesan cheese" class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600"></textarea>
+          <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Ingredients (comma separated or per line)</label>
+          <textarea id="addIngredients" rows="3" required placeholder="1 packet spinach, 1 piece tamarind, 1/4 tsp salt" class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600"></textarea>
         </div>
 
         <div>
-          <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Cooking Steps (separated by line break or semicolon)</label>
-          <textarea id="addSteps" rows="3" required placeholder="1. Sauté minced shallots in butter until translucent.&#10;2. Toast rice for two minutes.&#10;3. Slowly incorporate warm saffron stock ladle by ladle until creamy." class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600"></textarea>
+          <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Method Steps (one per line)</label>
+          <textarea id="addSteps" rows="3" required placeholder="1. Fry dal in oil.&#10;2. Add spices and sauté.&#10;3. Blanch spinach." class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600"></textarea>
         </div>
 
         <div>
-          <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Chef's Notes</label>
-          <input type="text" id="addNotes" placeholder="e.g. Serve immediately with extra freshly grated parmesan." class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600">
+          <label class="block font-mono text-[11px] uppercase tracking-wider text-ink-500 mb-1">Cook's Notes</label>
+          <input type="text" id="addNotes" placeholder="e.g. Family variation note..." class="w-full bg-parchment-50 border border-ink-200 rounded-lg px-3 py-2 text-ink-900 focus:outline-none focus:border-ink-600">
         </div>
 
         <div>
@@ -390,11 +335,11 @@
         <div class="pt-2 border-t border-ink-100 flex items-center justify-between">
           <label class="inline-flex items-center gap-2 cursor-pointer">
             <input type="checkbox" id="addDownloadMd" checked class="rounded border-ink-300 text-clay-700">
-            <span class="text-ink-700 font-mono text-[11px]">Download <code class="text-ink-900 font-bold">.md</code> file on save</span>
+            <span class="text-ink-700 font-mono text-[11px]">Download <code class="text-ink-900 font-bold">.md</code> to drop into <code class="text-ink-900 font-bold">_recipes/</code></span>
           </label>
           <label class="inline-flex items-center gap-2 cursor-pointer">
             <input type="checkbox" id="addFavorite" class="rounded border-ink-300 text-clay-700">
-            <span class="text-ink-700 font-mono text-[11px]">Mark as Favorite ★</span>
+            <span class="text-ink-700 font-mono text-[11px]">Mark Favorite ★</span>
           </label>
         </div>
 
@@ -406,13 +351,13 @@
     </div>
   </div>
 
-  <!-- ================= MARKDOWN MODAL ================= -->
+  <!-- MARKDOWN MODAL -->
   <div id="markdownModal" class="hidden fixed inset-0 z-50 bg-ink-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white border border-ink-200 max-w-2xl w-full rounded-2xl p-6 sm:p-8 space-y-4 shadow-xl max-h-[85vh] flex flex-col">
       <div class="flex items-baseline justify-between border-b border-ink-100 pb-3">
         <div>
           <h3 class="font-serif text-lg font-bold text-ink-900">Recipe Markdown</h3>
-          <p class="text-[11px] font-mono text-ink-400">Structured with YAML frontmatter for your GitHub repo</p>
+          <p class="text-[11px] font-mono text-ink-400">Jekyll-compatible YAML Frontmatter</p>
         </div>
         <button onclick="closeMarkdownModal()" class="text-ink-400 hover:text-ink-700 text-lg">&times;</button>
       </div>
@@ -424,180 +369,115 @@
       <div class="flex items-center justify-between pt-2 border-t border-ink-100">
         <span id="copyFeedback" class="text-xs font-mono text-clay-700 opacity-0 transition-opacity">Copied to clipboard!</span>
         <div class="flex items-center gap-2">
-          <button onclick="copyMarkdownText()" class="px-3.5 py-1.5 border border-ink-200 hover:bg-parchment-100 rounded-lg text-xs font-mono text-ink-800 transition">Copy Markdown</button>
+          <button onclick="copyMarkdownText()" class="px-3.5 py-1.5 border border-ink-200 hover:bg-parchment-100 rounded-lg text-xs font-mono text-ink-800 transition">Copy</button>
           <button onclick="downloadCurrentMarkdownModal()" class="px-4 py-1.5 bg-ink-900 text-parchment-50 hover:bg-clay-700 rounded-lg text-xs font-mono transition">Download .md</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification -->
+  <!-- Toast -->
   <div id="toastNotification" class="fixed bottom-6 right-6 z-50 bg-ink-900 text-parchment-50 text-xs font-mono px-4 py-2.5 rounded-lg shadow-lg transform translate-y-16 opacity-0 transition-all duration-200 pointer-events-none">
-    Notice text
+    Notice
   </div>
 
   <script>
-    /* ================= DATASET DEFINITION ================= */
-    const INITIAL_RECIPES = [
+    /* ================= JEKYLL AUTO-DISCOVERY BRIDGE =================
+     * When GitHub Pages runs Jekyll, it loops through the _recipes/ folder
+     * and generates this JSON array automatically.
+     * When running locally without Jekyll, fallback data is provided.
+     */
+    let AUTO_DISCOVERED_RECIPES = [
+      {% for item in site.recipes %}
       {
-        id: 'lamb-shanks-in-massaman-curry',
-        name: 'Lamb Shanks in Massaman Curry',
-        cuisine: 'Thai',
-        category: 'Dinner',
-        servings: 4,
-        prepTime: 20,
-        cookTime: 120,
-        totalTime: 140,
-        rating: 4.9,
-        difficulty: 'Medium',
-        favorite: true,
-        dietaryTag: 'Dairy-Free',
-        ingredients: [
-          'Lamb shanks',
-          'Massaman curry paste',
-          'Coconut milk',
-          'Potatoes',
-          'Onion',
-          'Fish sauce',
-          'Roasted peanuts'
-        ],
-        instructions: [
-          'Sear seasoned lamb shanks in a heavy Dutch oven until deeply browned on all sides.',
-          'Sauté curry paste in coconut cream until fragrant and oil begins to split.',
-          'Add browned shanks, peeled chunked potatoes, onion, and broth to the pot.',
-          'Slow simmer on low heat for 2 hours until the meat is tender and falling off the bone.'
-        ],
-        notes: 'Liked by Julia; braise low and slow until meat falls off bone; serve with jasmine rice and crushed peanuts.',
-        sourceUrl: 'https://www.recipetineats.com/lamb-shanks-in-massaman-curry/'
+        id: {{ item.slug | jsonify }},
+        name: {{ item.title | jsonify }},
+        cuisine: {{ item.cuisine | default: "General" | jsonify }},
+        category: {{ item.category | default: "Main" | jsonify }},
+        servings: {{ item.servings | default: 4 }},
+        prepTime: {{ item.prep_time_mins | default: 15 }},
+        cookTime: {{ item.cook_time_mins | default: 20 }},
+        totalTime: {{ item.total_time_mins | default: 35 }},
+        rating: {{ item.rating | default: 5.0 }},
+        difficulty: {{ item.difficulty | default: "Easy" | jsonify }},
+        favorite: {{ item.favorite | default: false }},
+        dietaryTag: {{ item.dietary | default: "Vegetarian" | jsonify }},
+        sourceUrl: {{ item.source_url | default: "" | jsonify }},
+        rawContent: {{ item.content | jsonify }}
       },
+      {% endfor %}
+    ];
+
+    // Fallback seed data if running purely offline/locally without Jekyll server
+    const FALLBACK_RECIPES = [
       {
-        id: 'venn-pongal',
-        name: 'Venn Pongal',
+        id: 'ammachis-keerai-masiyal',
+        name: "Ammachi's Keerai Masiyal",
         cuisine: 'South Indian',
-        category: 'Breakfast',
-        servings: 4,
-        prepTime: 30,
-        cookTime: 20,
-        totalTime: 50,
-        rating: 4.8,
-        difficulty: 'Easy',
-        favorite: true,
-        dietaryTag: 'Vegetarian',
-        ingredients: [
-          'Raw rice',
-          'Moong dal',
-          'Ghee',
-          'Cumin seeds',
-          'Black peppercorns',
-          'Cashews',
-          'Ginger',
-          'Curry leaves',
-          'Asafoetida (hing)'
-        ],
-        instructions: [
-          'Soak rice and moong dal for 30 minutes.',
-          'Pressure cook with 4 cups of water and salt until soft and mashable.',
-          'Temper cumin seeds, whole peppercorns, ginger, curry leaves, and cashews in generous hot ghee.',
-          'Combine the fragrant tempering thoroughly into the cooked pongal and serve piping hot.'
-        ],
-        notes: 'Authentic family favorite; serve piping hot with fresh coconut chutney or homemade brinjal chutney.',
-        sourceUrl: 'https://www.indianhealthyrecipes.com/pongal-recipe-venn-pongal/'
-      },
-      {
-        id: 'brinjal-chutney',
-        name: 'Brinjal Chutney',
-        cuisine: 'South Indian',
-        category: 'Lunch',
+        category: 'Side',
         servings: 4,
         prepTime: 10,
         cookTime: 15,
         totalTime: 25,
-        rating: 4.7,
+        rating: 5.0,
+        difficulty: 'Easy',
+        favorite: true,
+        dietaryTag: 'Vegetarian',
+        ingredients: [
+          '1 packet spinach',
+          '1 piece tamarind',
+          '1/4 tsp salt',
+          '1/2 tsp cumin seeds (per packet of spinach)',
+          '3 dried chillies',
+          '1/4 tsp black pepper',
+          '1 tbsp chana dal',
+          '1 tbsp urad dal',
+          '1 clove garlic (Amma\'s style) OR pinch of hing (Paati\'s style)',
+          '1 tbsp cooking oil'
+        ],
+        instructions: [
+          'In a pan, fry chana dal and urad dal in oil until light golden.',
+          'Add cumin seeds, 3 dried chillies, black pepper, and garlic (or hing); sauté and fry ("vadhakify") until aromatic, then set aside.',
+          'Blanch/cook the spinach with tamarind piece and 1/4 tsp salt for around 1 minute (preserve green colour).',
+          'Coarsely mash or blend the spinach together with fried dal-spice mixture into a thick, textured masiyal.'
+        ],
+        notes: "Paati's / Ammachi's family recipe. Use either garlic (Amma's style) or hing (Paati's style). Do not overcook spinach (~1 min). Classic Monday dinner pairing: dal, cabbage thoran, potato fry, vada.",
+        sourceUrl: ''
+      },
+      {
+        id: 'ammachis-doll',
+        name: "Ammachi's \"Doll\" (Dal)",
+        cuisine: 'South Indian',
+        category: 'Dinner',
+        servings: 4,
+        prepTime: 15,
+        cookTime: 25,
+        totalTime: 40,
+        rating: 5.0,
         difficulty: 'Easy',
         favorite: true,
         dietaryTag: 'Vegan',
         ingredients: [
-          'Brinjal (Eggplant)',
-          'Ripe tomatoes',
-          'Shallots',
-          'Green chillies',
-          'Byadgi chillies',
-          'Tamarind',
-          'Sesame oil',
-          'Mustard seeds',
-          'Curry leaves'
+          '1 cup toor dal (soaked overnight)',
+          '2 cloves garlic',
+          '1 whole tomato',
+          '1 tsp cumin seeds (for boiling)',
+          '1/4 tsp mustard seeds',
+          '1/2 tsp urad dal',
+          '1 sprig curry leaves',
+          '2 brown onions (thinly sliced)',
+          '1-2 cm ginger (to grind)',
+          '3 dried chillies (to grind)',
+          '1/2 tsp cumin seeds (to grind)'
         ],
         instructions: [
-          'Simmer chopped brinjals, tomatoes, shallots, and both chillies in a little water for 15 minutes until tender.',
-          'Allow the cooked mixture to cool, then grind coarsely with salt and tamarind extract.',
-          'Heat sesame oil in a small pan, splutter mustard seeds and curry leaves, and temper over the chutney.'
+          'Pressure cook soaked toor dal, 2 garlic cloves, 1 whole tomato, and 1 tsp cumin seeds in water for 20 minutes.',
+          'Grind fresh ginger, 3 dried chillies, and 1/2 tsp cumin seeds into a coarse paste.',
+          'In a pan, temper mustard seeds and urad dal; add curry leaves and onions, frying until golden.',
+          'Add the ginger-chilli-cumin paste and sauté for 1-2 minutes until fragrant.',
+          'Mash cooked dal and whole tomato, combine into tempered onion mixture, season with salt, and simmer 5 minutes.'
         ],
-        notes: 'Classic pairing specifically made for Venn Pongal; tamarind imparts delicious tanginess.',
-        sourceUrl: ''
-      },
-      {
-        id: 'ball-curry',
-        name: 'Ball Curry',
-        cuisine: 'Anglo-Indian',
-        category: 'Dinner',
-        servings: 4,
-        prepTime: 25,
-        cookTime: 35,
-        totalTime: 60,
-        rating: 4.8,
-        difficulty: 'Medium',
-        favorite: true,
-        dietaryTag: 'Dairy-Free',
-        ingredients: [
-          'Minced meat (beef or mutton)',
-          'Onions',
-          'Garlic',
-          'Ginger',
-          'Garam masala',
-          'Turmeric',
-          'Tomatoes',
-          'Fresh coriander',
-          'Coconut milk'
-        ],
-        instructions: [
-          'Season minced meat with crushed ginger-garlic, spices, and roll firmly into walnut-sized meatballs.',
-          'Sauté finely sliced onions, tomatoes, and ground spices into a rich curry base.',
-          'Gently slide meatballs into the simmering gravy without stirring vigorously so they hold shape.',
-          'Simmer covered until meat is cooked through, then swirl in coconut milk and fresh coriander.'
-        ],
-        notes: 'Traditional Anglo-Indian recipe; pairs wonderfully with yellow coconut rice or warm crusty bread.',
-        sourceUrl: ''
-      },
-      {
-        id: 'risoni-with-4-bean-mix',
-        name: 'Risoni with 4-Bean Mix',
-        cuisine: 'Mediterranean',
-        category: 'Dinner',
-        servings: 4,
-        prepTime: 10,
-        cookTime: 15,
-        totalTime: 25,
-        rating: 4.6,
-        difficulty: 'Easy',
-        favorite: false,
-        dietaryTag: 'Vegetarian',
-        ingredients: [
-          'Risoni pasta (orzo)',
-          'Canned 4-bean mix (rinsed)',
-          'Zucchini',
-          'Cherry tomatoes',
-          'Extra virgin olive oil',
-          'Garlic',
-          'Lemon juice',
-          'Fresh herbs (parsley, basil)'
-        ],
-        instructions: [
-          'Boil risoni in salted water until al dente; drain and lightly toss with olive oil.',
-          'In a skillet, sauté minced garlic, sliced zucchini, and cherry tomatoes until just tender.',
-          'Fold in the rinsed 4-bean mix and cooked risoni.',
-          'Season with lemon juice, sea salt, fresh black pepper, and chopped tender herbs.'
-        ],
-        notes: 'Nutritious weekday meal prep staple; delicious served warm or chilled as a fresh pasta salad.',
+        notes: "Traditional home dal. Soaking toor dal overnight yields ultra-creamy texture. Pressure cook the tomato whole. Pairs with Keerai Masiyal, potato fry, and hot rice with ghee.",
         sourceUrl: ''
       },
       {
@@ -613,25 +493,162 @@
         difficulty: 'Medium',
         favorite: true,
         dietaryTag: 'Vegetarian',
-        ingredients: [
-          'Raw rice',
-          'Urad dal',
-          'Chana dal',
-          'Fenugreek seeds (methi)',
-          'Salt',
-          'Water',
-          'Ghee or sesame oil'
-        ],
+        ingredients: ['Raw rice', 'Urad dal', 'Chana dal', 'Fenugreek seeds (methi)', 'Salt', 'Water', 'Ghee or sesame oil'],
         instructions: [
-          'Soak rice, urad dal, and fenugreek seeds for 5 to 6 hours, then grind to a fluffy, smooth batter.',
-          'Ferment overnight in a warm spot until visibly doubled and aerated.',
-          'Heat a cast-iron tawa; rub with halved onion and pour a ladleful of batter, swirling outwards thinly.',
-          'Drizzle ghee along the circumference; cook on medium-high heat until golden and paper-crisp.'
+          'Soak rice, urad dal, chana dal, and fenugreek seeds for 5 to 6 hours, then grind to a smooth batter.',
+          'Ferment overnight in a warm spot until visibly doubled.',
+          'Heat a cast-iron tawa; rub with onion and swirl a ladle of batter thinly.',
+          'Drizzle ghee along circumference; cook until golden and crisp.'
         ],
-        notes: 'Pairs perfectly with Venn Pongal and brinjal chutney; wipe hot tawa with oil-rubbed onion before spreading batter for paper-thin crispiness.',
+        notes: 'Pairs with Venn Pongal and brinjal chutney; wipe tawa with oil-rubbed onion.',
         sourceUrl: 'https://www.indianhealthyrecipes.com/dosa-recipe-dosa-batter/'
+      },
+      {
+        id: 'lamb-shanks-in-massaman-curry',
+        name: 'Lamb Shanks in Massaman Curry',
+        cuisine: 'Thai',
+        category: 'Dinner',
+        servings: 4,
+        prepTime: 20,
+        cookTime: 120,
+        totalTime: 140,
+        rating: 4.9,
+        difficulty: 'Medium',
+        favorite: true,
+        dietaryTag: 'Dairy-Free',
+        ingredients: ['Lamb shanks', 'Massaman curry paste', 'Coconut milk', 'Potatoes', 'Onion', 'Fish sauce', 'Peanuts'],
+        instructions: [
+          'Sear seasoned lamb shanks until deeply browned on all sides.',
+          'Sauté curry paste in coconut cream until fragrant and split.',
+          'Add browned shanks, diced potatoes, onion, and broth.',
+          'Slow simmer on low heat for 2 hours until falling off the bone.'
+        ],
+        notes: 'Liked by Julia; braise low and slow until meat falls off bone; serve with jasmine rice.',
+        sourceUrl: 'https://www.recipetineats.com/lamb-shanks-in-massaman-curry/'
+      },
+      {
+        id: 'venn-pongal',
+        name: 'Venn Pongal',
+        cuisine: 'South Indian',
+        category: 'Breakfast',
+        servings: 4,
+        prepTime: 30,
+        cookTime: 20,
+        totalTime: 50,
+        rating: 4.8,
+        difficulty: 'Easy',
+        favorite: true,
+        dietaryTag: 'Vegetarian',
+        ingredients: ['Raw rice', 'Moong dal', 'Ghee', 'Cumin seeds', 'Black peppercorns', 'Cashews', 'Ginger', 'Curry leaves', 'Hing'],
+        instructions: [
+          'Soak rice and moong dal for 30 minutes.',
+          'Pressure cook with 4 cups of water and salt until soft.',
+          'Temper cumin seeds, whole peppercorns, ginger, curry leaves, and cashews in generous ghee.',
+          'Combine tempering into the cooked pongal and serve piping hot.'
+        ],
+        notes: 'Authentic family favorite; serve piping hot with coconut chutney or brinjal chutney.',
+        sourceUrl: 'https://www.indianhealthyrecipes.com/pongal-recipe-venn-pongal/'
+      },
+      {
+        id: 'brinjal-chutney',
+        name: 'Brinjal Chutney',
+        cuisine: 'South Indian',
+        category: 'Lunch',
+        servings: 4,
+        prepTime: 10,
+        cookTime: 15,
+        totalTime: 25,
+        rating: 4.7,
+        difficulty: 'Easy',
+        favorite: true,
+        dietaryTag: 'Vegan',
+        ingredients: ['Brinjal', 'Ripe tomatoes', 'Shallots', 'Green chillies', 'Byadgi chillies', 'Tamarind', 'Sesame oil', 'Mustard seeds', 'Curry leaves'],
+        instructions: [
+          'Simmer chopped brinjals, tomatoes, shallots, and chillies for 15 minutes until tender.',
+          'Cool, then grind coarsely with salt and tamarind extract.',
+          'Temper mustard seeds and curry leaves in hot sesame oil; pour over chutney.'
+        ],
+        notes: 'Classic pairing made specifically for Venn Pongal.',
+        sourceUrl: ''
+      },
+      {
+        id: 'ball-curry',
+        name: 'Ball Curry',
+        cuisine: 'Anglo-Indian',
+        category: 'Dinner',
+        servings: 4,
+        prepTime: 25,
+        cookTime: 35,
+        totalTime: 60,
+        rating: 4.8,
+        difficulty: 'Medium',
+        favorite: true,
+        dietaryTag: 'Dairy-Free',
+        ingredients: ['Minced meat', 'Onions', 'Garlic', 'Ginger', 'Garam masala', 'Turmeric', 'Tomatoes', 'Coriander', 'Coconut milk'],
+        instructions: [
+          'Season minced meat with crushed ginger-garlic and spices; roll firmly into balls.',
+          'Sauté sliced onions, tomatoes, and ground spices into a rich gravy base.',
+          'Gently slide meatballs into simmering gravy without breaking.',
+          'Simmer covered until cooked through; swirl in coconut milk and fresh coriander.'
+        ],
+        notes: 'Traditional Anglo-Indian recipe; pairs with yellow coconut rice or crusty bread.',
+        sourceUrl: ''
+      },
+      {
+        id: 'risoni-with-4-bean-mix',
+        name: 'Risoni with 4-Bean Mix',
+        cuisine: 'Mediterranean',
+        category: 'Dinner',
+        servings: 4,
+        prepTime: 10,
+        cookTime: 15,
+        totalTime: 25,
+        rating: 4.6,
+        difficulty: 'Easy',
+        favorite: false,
+        dietaryTag: 'Vegetarian',
+        ingredients: ['Risoni pasta', 'Canned 4-bean mix', 'Zucchini', 'Cherry tomatoes', 'Olive oil', 'Garlic', 'Lemon juice', 'Fresh herbs'],
+        instructions: [
+          'Boil risoni until al dente; drain and toss with olive oil.',
+          'Sauté minced garlic, zucchini, and cherry tomatoes until tender.',
+          'Fold in rinsed 4-bean mix and cooked risoni.',
+          'Season with lemon juice, sea salt, black pepper, and herbs.'
+        ],
+        notes: 'Nutritious weekday staple; delicious served warm or chilled.',
+        sourceUrl: ''
       }
     ];
+
+    /* Helper: Parse markdown content generated by Jekyll if necessary */
+    function parseJekyllContent(recipe) {
+      if (recipe.ingredients && recipe.instructions) return recipe;
+      const html = recipe.rawContent || '';
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Extract ingredients from lists
+      const ingNodes = doc.querySelectorAll('ul li');
+      const ingredients = ingNodes.length > 0 
+        ? Array.from(ingNodes).map(li => li.textContent.replace(/^\[[ x]\]\s*/i, '').trim())
+        : ['Ingredients listed in recipe file'];
+
+      // Extract steps from ordered lists
+      const stepNodes = doc.querySelectorAll('ol li');
+      const instructions = stepNodes.length > 0 
+        ? Array.from(stepNodes).map(li => li.textContent.trim())
+        : ['Refer to method in recipe file'];
+
+      // Extract blockquote for notes
+      const quoteNode = doc.querySelector('blockquote');
+      const notes = quoteNode ? quoteNode.textContent.trim() : (recipe.notes || '');
+
+      return {
+        ...recipe,
+        ingredients,
+        instructions,
+        notes
+      };
+    }
 
     let recipes = [];
     let currentFilterCuisine = 'All';
@@ -644,31 +661,29 @@
     let timerRemainingSeconds = 0;
     let isTimerRunning = false;
 
-    // Load from LocalStorage or initialize
-    function loadSavedRecipes() {
-      try {
-        const stored = localStorage.getItem('recipes_collection_v2');
-        if (stored) {
-          recipes = JSON.parse(stored);
-        } else {
-          recipes = [...INITIAL_RECIPES];
-          persistRecipes();
+    function initRecipes() {
+      // If Jekyll discovered recipes from _recipes/, parse them:
+      if (Array.isArray(AUTO_DISCOVERED_RECIPES) && AUTO_DISCOVERED_RECIPES.length > 0) {
+        recipes = AUTO_DISCOVERED_RECIPES.map(parseJekyllContent);
+      } else {
+        // Fallback when viewing index.html directly via browser filesystem:
+        try {
+          const stored = localStorage.getItem('recipes_collection_v4');
+          recipes = stored ? JSON.parse(stored) : [...FALLBACK_RECIPES];
+        } catch(e) {
+          recipes = [...FALLBACK_RECIPES];
         }
-      } catch (err) {
-        recipes = [...INITIAL_RECIPES];
       }
       activeRecipeId = recipes[0]?.id || '';
+      document.getElementById('recipeCountBadge').textContent = `${recipes.length} recipes in archive`;
     }
 
     function persistRecipes() {
       try {
-        localStorage.setItem('recipes_collection_v2', JSON.stringify(recipes));
-      } catch (e) {
-        console.error('Local storage save failed', e);
-      }
+        localStorage.setItem('recipes_collection_v4', JSON.stringify(recipes));
+      } catch(e) {}
     }
 
-    // Explicitly bound to window to prevent any ReferenceErrors
     window.switchView = function(viewName) {
       const catalogView = document.getElementById('catalogView');
       const kitchenView = document.getElementById('kitchenView');
@@ -678,19 +693,15 @@
       if (viewName === 'kitchen') {
         catalogView.classList.add('hidden');
         kitchenView.classList.remove('hidden');
-
         navCatalogBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900';
         navKitchenBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition bg-white text-ink-900 shadow-sm';
-
         renderKitchenView();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         kitchenView.classList.add('hidden');
         catalogView.classList.remove('hidden');
-
         navKitchenBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition text-ink-600 hover:text-ink-900';
         navCatalogBtn.className = 'px-3 py-1.5 rounded-md text-xs font-medium transition bg-white text-ink-900 shadow-sm';
-
         renderCuisineFilters();
         renderRecipeCards();
       }
@@ -703,7 +714,7 @@
 
     function renderCuisineFilters() {
       const container = document.getElementById('cuisineFilterContainer');
-      const cuisines = ['All', ...new Set(recipes.map(r => r.cuisine))];
+      const cuisines = ['All', ...new Set(recipes.map(r => r.cuisine).filter(Boolean))];
       
       container.innerHTML = cuisines.map(cuisine => {
         const isActive = currentFilterCuisine === cuisine;
@@ -762,20 +773,14 @@
       const emptyState = document.getElementById('noResultsNotice');
 
       const filtered = recipes.filter(r => {
-        // Search term matching
         const matchesSearch = !currentSearchTerm || 
           r.name.toLowerCase().includes(currentSearchTerm) ||
           r.cuisine.toLowerCase().includes(currentSearchTerm) ||
-          r.ingredients.some(i => i.toLowerCase().includes(currentSearchTerm)) ||
+          (r.ingredients && r.ingredients.some(i => i.toLowerCase().includes(currentSearchTerm))) ||
           (r.notes && r.notes.toLowerCase().includes(currentSearchTerm));
 
-        // Cuisine filter
         const matchesCuisine = currentFilterCuisine === 'All' || r.cuisine === currentFilterCuisine;
-
-        // Favorite filter
         const matchesFav = !currentFilterFavorite || r.favorite;
-
-        // Quick cook filter (<= 30 mins)
         const matchesQuick = !currentFilterQuick || (r.totalTime <= 30);
 
         return matchesSearch && matchesCuisine && matchesFav && matchesQuick;
@@ -812,7 +817,7 @@
             </div>
 
             <p class="text-xs text-ink-600 line-clamp-2 leading-relaxed">
-              ${r.ingredients.slice(0, 4).join(', ')}${r.ingredients.length > 4 ? ', ...' : ''}
+              ${(r.ingredients || []).slice(0, 4).join(', ')}${(r.ingredients || []).length > 4 ? ', ...' : ''}
             </p>
           </div>
 
@@ -838,9 +843,7 @@
         rec.favorite = !rec.favorite;
         persistRecipes();
         renderRecipeCards();
-        if (activeRecipeId === recipeId) {
-          renderKitchenView();
-        }
+        if (activeRecipeId === recipeId) renderKitchenView();
       }
     };
 
@@ -849,13 +852,11 @@
       if (!recipe) return;
       activeRecipeId = recipe.id;
 
-      // Populate Selector
       const select = document.getElementById('kitchenRecipeSelect');
       select.innerHTML = recipes.map(r => `
         <option value="${r.id}" ${r.id === activeRecipeId ? 'selected' : ''}>${r.name}</option>
       `).join('');
 
-      // Populate Header metadata
       document.getElementById('kitchenCuisineTag').textContent = recipe.cuisine;
       document.getElementById('kitchenCategoryTag').textContent = recipe.category;
       document.getElementById('kitchenTitle').textContent = recipe.name;
@@ -864,9 +865,8 @@
       document.getElementById('kitchenTotalTime').textContent = `${recipe.totalTime} min`;
       document.getElementById('kitchenRatingDiet').textContent = `${recipe.rating} ★ • ${recipe.dietaryTag}`;
 
-      // Populate Ingredients Checklist
       const ingList = document.getElementById('kitchenIngredientsList');
-      ingList.innerHTML = recipe.ingredients.map((ing, idx) => `
+      ingList.innerHTML = (recipe.ingredients || []).map((ing, idx) => `
         <li class="flex items-start gap-2.5">
           <input type="checkbox" id="ing_${idx}" class="mt-1 rounded border-ink-300 text-clay-700 focus:ring-0 check-strikethrough cursor-pointer">
           <label for="ing_${idx}" class="cursor-pointer text-ink-800 select-none">
@@ -875,21 +875,18 @@
         </li>
       `).join('');
 
-      // Populate Cooking Steps
       const stepsList = document.getElementById('kitchenStepsList');
-      document.getElementById('kitchenStepCounter').textContent = `${recipe.instructions.length} Steps`;
-      stepsList.innerHTML = recipe.instructions.map((step, idx) => `
+      document.getElementById('kitchenStepCounter').textContent = `${(recipe.instructions || []).length} Steps`;
+      stepsList.innerHTML = (recipe.instructions || []).map((step, idx) => `
         <div class="flex items-start gap-4">
           <span class="font-mono text-xs font-bold text-ink-400 bg-parchment-100 rounded-md w-6 h-6 flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
           <p class="text-sm text-ink-800 leading-relaxed">${step}</p>
         </div>
       `).join('');
 
-      // Notes and Marginalia
       const notesEl = document.getElementById('kitchenNotes');
       notesEl.textContent = recipe.notes || 'No cook notes recorded yet for this recipe.';
 
-      // Source link
       const sourceContainer = document.getElementById('kitchenSourceContainer');
       const sourceLink = document.getElementById('kitchenSourceLink');
       if (recipe.sourceUrl && recipe.sourceUrl.trim().length > 0) {
@@ -918,9 +915,7 @@
       if (factor === 3) activeBtnId = 'scaleBtn3';
       
       const activeBtn = document.getElementById(activeBtnId);
-      if (activeBtn) {
-        activeBtn.className = 'px-1.5 py-0.5 rounded bg-white text-ink-900 font-bold shadow-xs';
-      }
+      if (activeBtn) activeBtn.className = 'px-1.5 py-0.5 rounded bg-white text-ink-900 font-bold shadow-xs';
       notify(`Scaled ingredients to ${factor}x yield`);
     };
 
@@ -954,7 +949,6 @@
             btn.textContent = 'Start';
             btn.classList.remove('bg-clay-700');
             btn.classList.add('bg-ink-900');
-            playChime();
             notify("Kitchen timer finished!");
           }
         }, 1000);
@@ -980,28 +974,9 @@
         `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 
-    function playChime() {
-      try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-        osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.6);
-      } catch (e) {
-        // AudioContext restricted or not supported
-      }
-    }
-
     function formatRecipeMarkdown(recipe) {
-      const ingredientsMd = recipe.ingredients.map(i => `- [ ] ${i}`).join('\n');
-      const instructionsMd = recipe.instructions.map((step, idx) => `${idx + 1}. ${step}`).join('\n');
+      const ingredientsMd = (recipe.ingredients || []).map(i => `- [ ] ${i}`).join('\n');
+      const instructionsMd = (recipe.instructions || []).map((step, idx) => `${idx + 1}. ${step}`).join('\n');
 
       return `---
 title: "${recipe.name}"
@@ -1026,7 +1001,7 @@ ${ingredientsMd}
 ### Method
 ${instructionsMd}
 
-### Notes & Pairing Tips
+### Cook's Notes & Pairing Tips
 > ${recipe.notes}
 `;
     }
@@ -1074,7 +1049,7 @@ ${instructionsMd}
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      notify(`Downloaded ${filename}`);
+      notify(`Downloaded ${filename} (place into _recipes/)`);
     }
 
     window.openNewRecipeModal = function() {
@@ -1101,7 +1076,7 @@ ${instructionsMd}
       const favorite = document.getElementById('addFavorite').checked;
       const autoDownload = document.getElementById('addDownloadMd').checked;
 
-      const ingredients = ingredientsRaw.split(',').map(s => s.trim()).filter(Boolean);
+      const ingredients = ingredientsRaw.split(/\n|,/).map(s => s.trim()).filter(Boolean);
       const instructions = stepsRaw.split(/\n|;/).map(s => s.replace(/^\d+[\.\)]\s*/, '').trim()).filter(Boolean);
       const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
@@ -1120,7 +1095,7 @@ ${instructionsMd}
         dietaryTag: diet,
         ingredients,
         instructions,
-        notes: notes || 'Handwritten kitchen recipe.',
+        notes: notes || 'Family recipe.',
         sourceUrl
       };
 
@@ -1136,7 +1111,7 @@ ${instructionsMd}
       if (autoDownload) {
         downloadRecipeAsMarkdown(newRecipe);
       }
-      notify(`Saved "${name}" to recipe box`);
+      notify(`Saved "${name}". Drop into _recipes/ on GitHub!`);
     };
 
     function notify(text) {
@@ -1145,11 +1120,11 @@ ${instructionsMd}
       toast.classList.remove('translate-y-16', 'opacity-0');
       setTimeout(() => {
         toast.classList.add('translate-y-16', 'opacity-0');
-      }, 2500);
+      }, 3000);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadSavedRecipes();
+      initRecipes();
       renderCuisineFilters();
       renderRecipeCards();
       renderKitchenView();
