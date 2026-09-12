@@ -670,8 +670,9 @@ layout: null
         const dataIsland = document.getElementById('jekyllDataIsland');
         if (dataIsland) {
           const raw = dataIsland.textContent.trim();
-          // If Liquid tags were evaluated by Jekyll, it will start with '[' and NOT '{%'
-          if (!raw.startsWith('{%') && raw.startsWith('[')) {
+          // Separate '{' and '%' to prevent Jekyll's Liquid parser from mistaking this JS string for a Liquid tag
+          const liquidToken = '{' + '%';
+          if (!raw.includes(liquidToken) && raw.startsWith('[')) {
             const jekyllParsed = JSON.parse(raw);
             if (Array.isArray(jekyllParsed) && jekyllParsed.length > 0) {
               recipes = jekyllParsed.map(parseJekyllContent);
